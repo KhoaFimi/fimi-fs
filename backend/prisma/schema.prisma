@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+//#region:User
+enum PositionEnum {
+  COLLABORATOR
+  FINANCE_CONSULTANT
+  AREA_SALES_DIRECTOR
+  REGIONAL_DIRIECTOR
+  BRANCH_DIRECTOR
+  MERCHANT
+}
+
+enum DepartmenEnum {
+  BOARD_OF_DIRECTORS
+  OPERATIONS
+  MARKETING
+  SALES
+  IT
+}
+
+enum TeamEnum {
+  HUMAN_RESOURCES
+  ACCOUNTANT
+  LEGAL
+  FINTECH
+  INSURTECH
+  PARTNERSHIP
+}
+
+enum GenderEnum {
+  MALE
+  FEMALE
+}
+
+enum UserRoleEnum {
+  USER
+  ADMIN
+}
+
+enum ContractTypeEnum {
+  EMPLOYMENT_CONTRACT
+  SERVICE_CONTRACT
+}
+
+enum EducationLevelEnum {
+  POST_GRADUATE_LEVEL
+  UNIVERSITY_LEVEL
+  COLLEGE_LEVEL
+  INTERMEDIATE_LEVEL
+  HIGH_SCHOOL_LEVEL
+  OTHER
+}
+
+type WorkType {
+  position   PositionEnum  @default(COLLABORATOR)
+  department DepartmenEnum @default(SALES)
+  team       TeamEnum      @default(FINTECH)
+}
+
+type CitizenIdentificationType {
+  number       String
+  dateOfIssue  String
+  placeOfIssue String
+}
+
+type BankType {
+  accountName   String
+  accountNumber String
+  bankName      String
+}
+
+type AddressType {
+  address  String
+  ward     String
+  district String
+  province String
+}
+
+type ProfileType {
+  position              PositionEnum               @default(COLLABORATOR)
+  department            DepartmenEnum              @default(SALES)
+  team                  TeamEnum                   @default(FINTECH)
+  gender                GenderEnum?
+  dateOfBirth           String?
+  placeOfBirth          String?
+  citizenIdentification CitizenIdentificationType?
+  nation                String?
+  education             EducationLevelEnum?
+  currentAddress        AddressType?
+  bank                  BankType?
+  avatar                String?
+}
+
+type DocumentType {
+  documentStatus             Boolean          @default(false)
+  contractType               ContractTypeEnum
+  contract                   String
+  contractEndAt              DateTime
+  portrait                   String
+  citizenIdentificationFront String
+  citizenIdentificationBack  String
+}
+
+model User {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  code          String        @unique
+  role          UserRoleEnum  @default(USER)
+  fullname      String
+  email         String        @unique
+  phone         String        @unique
+  password      String
+  profile       ProfileType?
+  document      DocumentType?
+  tnc           Boolean
+  workStatus    Boolean
+  emailVerified String?
+  refreshToken  String?
+  version       Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  managerId String? @db.ObjectId
+  manager   User?   @relation("manage", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  manage    User[]  @relation("manage")
+}
+
+//#endregion
+
+//#region:Token
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+}
+
+model ForgotPasswordToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+}
+
+//#endregion
