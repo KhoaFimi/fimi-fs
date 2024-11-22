@@ -6,7 +6,7 @@ import AuthPageWrapper from '@/features/auth/components/auth-page-wrapper'
 import RegisterForm from '@/features/auth/components/form/register-form'
 
 const searchParams = z.object({
-	step: z.number().catch(1)
+	data: z.string().optional()
 })
 
 const RegisterPage = () => {

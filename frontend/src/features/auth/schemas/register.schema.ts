@@ -1,5 +1,23 @@
 import { z } from 'zod'
 
+const isAdult = (birthDateString: string): boolean => {
+	const birthdate = new Date(birthDateString)
+
+	const today = new Date()
+
+	let age = today.getFullYear() - birthdate.getFullYear()
+	const monthDiff = today.getMonth() - birthdate.getMonth()
+
+	if (
+		monthDiff < 0 ||
+		(monthDiff === 0 && today.getDate() < birthdate.getDate())
+	) {
+		age--
+	}
+
+	return age >= 18
+}
+
 export const registerSchema = z.object({
 	fullname: z.string().min(1, { message: 'Vui lòng nhập họ và tên' }),
 	email: z
@@ -26,11 +44,13 @@ export const registerSchema = z.object({
 		.refine(password => /[0-9]/.test(password), {
 			message: 'Mật khẩu phải có ít nhất 1 chữ số'
 		}),
-	dateOfBirth: z.date(),
+	dateOfBirth: z.string().refine(value => isAdult(value), {
+		message: 'Yêu cầu trên 18 tuổi'
+	}),
 	confirmPassword: z.string().min(1, {
 		message: 'Vui lòng nhập lại mật khẩu'
 	}),
-	referralCode: z.string().optional(),
+	managerId: z.string().optional(),
 	tnc: z.boolean().default(false)
 })
 

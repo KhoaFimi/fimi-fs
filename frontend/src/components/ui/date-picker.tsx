@@ -790,7 +790,7 @@ const DateTimePicker = React.forwardRef<
 									}
 								)
 							) : (
-								<span>{placeholder}</span>
+								<span className='text-foreground/50'>{placeholder}</span>
 							)}
 						</Button>
 					</div>

@@ -18,6 +18,7 @@ import { Route as AuthenticatedDashboardImport } from './routes/_authenticated/d
 import { Route as AuthResetPasswordIndexImport } from './routes/auth/reset-password/index'
 import { Route as AuthRegisterIndexImport } from './routes/auth/register/index'
 import { Route as AuthLoginIndexImport } from './routes/auth/login/index'
+import { Route as AuthInviteIndexImport } from './routes/auth/invite/index'
 import { Route as AuthForgotPasswordIndexImport } from './routes/auth/forgot-password/index'
 import { Route as AuthEmailVerificationIndexImport } from './routes/auth/email-verification/index'
 
@@ -61,6 +62,12 @@ const AuthRegisterIndexRoute = AuthRegisterIndexImport.update({
 const AuthLoginIndexRoute = AuthLoginIndexImport.update({
   id: '/login/',
   path: '/login/',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthInviteIndexRoute = AuthInviteIndexImport.update({
+  id: '/invite/',
+  path: '/invite/',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -124,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordIndexImport
       parentRoute: typeof AuthImport
     }
+    '/auth/invite/': {
+      id: '/auth/invite/'
+      path: '/invite'
+      fullPath: '/auth/invite'
+      preLoaderRoute: typeof AuthInviteIndexImport
+      parentRoute: typeof AuthImport
+    }
     '/auth/login/': {
       id: '/auth/login/'
       path: '/login'
@@ -165,6 +179,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 interface AuthRouteChildren {
   AuthEmailVerificationIndexRoute: typeof AuthEmailVerificationIndexRoute
   AuthForgotPasswordIndexRoute: typeof AuthForgotPasswordIndexRoute
+  AuthInviteIndexRoute: typeof AuthInviteIndexRoute
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
   AuthRegisterIndexRoute: typeof AuthRegisterIndexRoute
   AuthResetPasswordIndexRoute: typeof AuthResetPasswordIndexRoute
@@ -173,6 +188,7 @@ interface AuthRouteChildren {
 const AuthRouteChildren: AuthRouteChildren = {
   AuthEmailVerificationIndexRoute: AuthEmailVerificationIndexRoute,
   AuthForgotPasswordIndexRoute: AuthForgotPasswordIndexRoute,
+  AuthInviteIndexRoute: AuthInviteIndexRoute,
   AuthLoginIndexRoute: AuthLoginIndexRoute,
   AuthRegisterIndexRoute: AuthRegisterIndexRoute,
   AuthResetPasswordIndexRoute: AuthResetPasswordIndexRoute,
@@ -187,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
+  '/auth/invite': typeof AuthInviteIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
   '/auth/register': typeof AuthRegisterIndexRoute
   '/auth/reset-password': typeof AuthResetPasswordIndexRoute
@@ -199,6 +216,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
+  '/auth/invite': typeof AuthInviteIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
   '/auth/register': typeof AuthRegisterIndexRoute
   '/auth/reset-password': typeof AuthResetPasswordIndexRoute
@@ -212,6 +230,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/auth/email-verification/': typeof AuthEmailVerificationIndexRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
+  '/auth/invite/': typeof AuthInviteIndexRoute
   '/auth/login/': typeof AuthLoginIndexRoute
   '/auth/register/': typeof AuthRegisterIndexRoute
   '/auth/reset-password/': typeof AuthResetPasswordIndexRoute
@@ -226,6 +245,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/auth/email-verification'
     | '/auth/forgot-password'
+    | '/auth/invite'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
@@ -237,6 +257,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/auth/email-verification'
     | '/auth/forgot-password'
+    | '/auth/invite'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
@@ -248,6 +269,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/auth/email-verification/'
     | '/auth/forgot-password/'
+    | '/auth/invite/'
     | '/auth/login/'
     | '/auth/register/'
     | '/auth/reset-password/'
@@ -295,6 +317,7 @@ export const routeTree = rootRoute
       "children": [
         "/auth/email-verification/",
         "/auth/forgot-password/",
+        "/auth/invite/",
         "/auth/login/",
         "/auth/register/",
         "/auth/reset-password/"
@@ -310,6 +333,10 @@ export const routeTree = rootRoute
     },
     "/auth/forgot-password/": {
       "filePath": "auth/forgot-password/index.tsx",
+      "parent": "/auth"
+    },
+    "/auth/invite/": {
+      "filePath": "auth/invite/index.tsx",
       "parent": "/auth"
     },
     "/auth/login/": {

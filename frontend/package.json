@@ -1,5 +1,5 @@
 {
-	"name": "frontend-v2",
+	"name": "frontend",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
@@ -30,6 +30,7 @@
 		"input-otp": "^1.4.1",
 		"jwt-decode": "^4.0.0",
 		"lucide-react": "^0.460.0",
+		"qrcode.react": "^4.1.0",
 		"react": "^18.3.1",
 		"react-day-picker": "9.3.2",
 		"react-dom": "^18.3.1",
