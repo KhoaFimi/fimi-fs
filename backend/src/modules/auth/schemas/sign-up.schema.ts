@@ -29,7 +29,7 @@ export const signUpSchema = z.object({
 	confirmPassword: z.string().min(1, {
 		message: 'Re-enter password'
 	}),
-	referralCode: z.string().optional(),
+	managerId: z.string().optional().nullable(),
 	tnc: z.boolean().default(false)
 })
 

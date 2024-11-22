@@ -22,9 +22,6 @@ export const signIn = async (values: SignInSchema, c: Context) => {
 		await sendVerificationMailQueue.add(
 			'send-verification-mail',
 			{
-				fullname: existingUser.fullname,
-				phone: existingUser.phone,
-				code: existingUser.code,
 				email: existingUser.email
 			},
 			{ removeOnComplete: true }
@@ -49,7 +46,6 @@ export const signIn = async (values: SignInSchema, c: Context) => {
 
 	const accessToken = await authService.jwt.generateAccessToken({
 		sub: existingUser.id,
-		code: existingUser.code,
 		role: existingUser.role,
 		version: existingUser.version
 	})
@@ -60,8 +56,8 @@ export const signIn = async (values: SignInSchema, c: Context) => {
 
 	await setCookie(c, 'refresh-token', refreshToken, {
 		httpOnly: true,
-		sameSite: 'Lax',
 		secure: true,
+		sameSite: 'None',
 		path: '/'
 	})
 

@@ -1,4 +1,3 @@
-import type { User } from '@prisma/client'
 import argon2 from 'argon2'
 import { HTTPException } from 'hono/http-exception'
 
@@ -6,14 +5,6 @@ import { ErrorLibrary } from '@/constraints/error-library.constraint.js'
 import { sendVerificationMailQueue } from '@/lib/queue.js'
 import type { SignUpSchema } from '@/modules/auth/schemas/sign-up.schema.js'
 import { usersService } from '@/modules/users/services/index.js'
-
-const genCode = (): string => {
-	const numbers = Array.from({ length: 5 }, () =>
-		Math.floor(Math.random() * 10)
-	)
-
-	return `FIMI${numbers.join('')}`
-}
 
 const isAdult = (birthDateString: string): boolean => {
 	const birthdateRegex = /^\d{4}-\d{2}-\d{2}$/
@@ -56,28 +47,16 @@ export const signUp = async (values: SignUpSchema) => {
 		phone: values.phone
 	})
 
-	let existingManager: User | null = null
-
-	if (values.referralCode && values.referralCode !== '') {
-		existingManager = await usersService.findByUnique({
-			where: { code: values.referralCode },
-			errorMessage: 'Manager not found'
-		})
-	}
-
 	const hashPassword = await argon2.hash(values.password)
-
-	const code = genCode()
 
 	const newUser = await usersService.create({
 		data: {
-			code,
 			fullname: values.fullname.toUpperCase(),
 			email: values.email,
 			phone: values.phone,
 			password: hashPassword,
 			tnc: values.tnc,
-			managerId: existingManager?.id,
+			managerId: values.managerId,
 			workStatus: true,
 			profile: {
 				dateOfBirth: values.dateOfBirth
@@ -88,10 +67,7 @@ export const signUp = async (values: SignUpSchema) => {
 	await sendVerificationMailQueue.add(
 		'send-verification-mail',
 		{
-			email: newUser.email,
-			fullname: newUser.fullname,
-			phone: newUser.phone,
-			code: code
+			email: newUser.email
 		},
 		{
 			removeOnComplete: true

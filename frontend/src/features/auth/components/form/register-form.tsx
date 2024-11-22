@@ -75,7 +75,7 @@ const RegisterForm = () => {
 	const onSubmit = (values: RegisterSchema) => {
 		mutate({
 			...values,
-			managerId: !data ? '' : atob(data)
+			managerId: !data ? null : atob(data)
 		})
 	}
 

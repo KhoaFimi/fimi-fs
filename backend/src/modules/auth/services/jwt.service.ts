@@ -16,7 +16,7 @@ import { env } from '@/utils/env.js'
 
 export interface IAccessTokenPayload extends JWTPayload {
 	sub: string
-	code: string
+
 	role: string
 	version: number
 }
@@ -77,7 +77,7 @@ export const jwt = {
 
 			const newAccessToken = await jwt.generateAccessToken({
 				sub: existingUser.id,
-				code: existingUser.code,
+
 				role: existingUser.role,
 				version: existingUser.version
 			})
@@ -96,7 +96,7 @@ export const jwt = {
 			await setCookie(c, 'refresh-token', newRefreshToken, {
 				httpOnly: true,
 				secure: true,
-				sameSite: 'lax',
+				sameSite: 'None',
 				path: '/'
 			})
 

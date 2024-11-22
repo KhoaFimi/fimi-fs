@@ -50,7 +50,7 @@ export const registerSchema = z.object({
 	confirmPassword: z.string().min(1, {
 		message: 'Vui lòng nhập lại mật khẩu'
 	}),
-	managerId: z.string().optional(),
+	managerId: z.string().optional().nullable(),
 	tnc: z.boolean().default(false)
 })
 
