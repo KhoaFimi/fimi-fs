@@ -60,7 +60,7 @@ export const jwt = {
 		return refreshToken
 	},
 	refreshToken: async (c: Context) => {
-		const refreshToken = getCookie(c, 'refresh-token')
+		const refreshToken = await getCookie(c, 'refresh-token')
 
 		if (!refreshToken)
 			throw new HTTPException(401, {
@@ -69,17 +69,11 @@ export const jwt = {
 			})
 
 		try {
-			const verifyToken = (await verify(
-				refreshToken,
-				refreshTokenPulicKey,
-				'RS256'
-			)) as IRefreshTokenPayload
-
-			const existingUser = await usersService.findByUnique({
-				where: {
-					id: verifyToken.sub
-				}
+			const existingUser = await usersService.findOneByCondition({
+				where: { refreshToken }
 			})
+
+			await verify(refreshToken, refreshTokenPulicKey, 'RS256')
 
 			const newAccessToken = await jwt.generateAccessToken({
 				sub: existingUser.id,
@@ -92,10 +86,18 @@ export const jwt = {
 				sub: existingUser.id
 			})
 
-			setCookie(c, 'refresh-token', newRefreshToken, {
+			await usersService.update({
+				where: { id: existingUser.id },
+				data: {
+					refreshToken: newRefreshToken
+				}
+			})
+
+			await setCookie(c, 'refresh-token', newRefreshToken, {
 				httpOnly: true,
-				sameSite: 'Lax',
-				secure: true
+				secure: true,
+				sameSite: 'lax',
+				path: '/'
 			})
 
 			return {

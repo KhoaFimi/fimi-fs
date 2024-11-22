@@ -22,6 +22,17 @@ export const signIn = factory.createHandlers(
 
 		const res = await authService.signIn(validatedData, c)
 
+		if (res.token)
+			return c.json<IResponse>({
+				statusCode: 401,
+				success: false,
+				message: res.message,
+				code: ErrorLibrary.UNAUTHORIZED,
+				data: {
+					token: res.token
+				}
+			})
+
 		return c.json<IResponse>({
 			statusCode: 200,
 			success: true,

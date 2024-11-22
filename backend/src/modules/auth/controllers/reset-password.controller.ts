@@ -1,6 +1,5 @@
 import { zValidator } from '@hono/zod-validator'
 import { HTTPException } from 'hono/http-exception'
-import { z } from 'zod'
 
 import { ErrorLibrary } from '@/constraints/error-library.constraint.js'
 import { StatusLibrary } from '@/constraints/status-librery.constraint.js'
@@ -11,19 +10,6 @@ import { factory } from '@/utils/factory.js'
 import { parseZodError } from '@/utils/parse-zod-error.js'
 
 export const resetPassword = factory.createHandlers(
-	zValidator(
-		'query',
-		z.object({
-			token: z.string().min(1, { message: 'Token is required' })
-		}),
-		res => {
-			if (!res.success)
-				throw new HTTPException(400, {
-					message: parseZodError(res.error.message),
-					cause: ErrorLibrary.BAD_REQUEST
-				})
-		}
-	),
 	zValidator('json', resetPasswordSchema, res => {
 		if (!res.success)
 			throw new HTTPException(400, {
@@ -33,9 +19,8 @@ export const resetPassword = factory.createHandlers(
 	}),
 	async c => {
 		const validatedData = c.req.valid('json')
-		const { token } = c.req.valid('query')
 
-		await authService.resetPassword(token, validatedData)
+		await authService.resetPassword(validatedData.token, validatedData)
 
 		return c.json<IResponse>({
 			statusCode: 200,

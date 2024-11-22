@@ -3,11 +3,9 @@ import argon2 from 'argon2'
 import { HTTPException } from 'hono/http-exception'
 
 import { ErrorLibrary } from '@/constraints/error-library.constraint.js'
-import { mailerConfig } from '@/lib/mailer.js'
+import { sendVerificationMailQueue } from '@/lib/queue.js'
 import type { SignUpSchema } from '@/modules/auth/schemas/sign-up.schema.js'
-import { tokenService } from '@/modules/token/services/index.js'
 import { usersService } from '@/modules/users/services/index.js'
-import { newUserMailTemplate } from '@/templates/new-user-mail.template.js'
 
 const genCode = (): string => {
 	const numbers = Array.from({ length: 5 }, () =>
@@ -60,7 +58,7 @@ export const signUp = async (values: SignUpSchema) => {
 
 	let existingManager: User | null = null
 
-	if (values.referralCode) {
+	if (values.referralCode && values.referralCode !== '') {
 		existingManager = await usersService.findByUnique({
 			where: { code: values.referralCode },
 			errorMessage: 'Manager not found'
@@ -87,28 +85,21 @@ export const signUp = async (values: SignUpSchema) => {
 		}
 	})
 
-	const verificationToken = await tokenService.verificationToken.generate(
-		newUser.email
+	await sendVerificationMailQueue.add(
+		'send-verification-mail',
+		{
+			email: newUser.email,
+			fullname: newUser.fullname,
+			phone: newUser.phone,
+			code: code
+		},
+		{
+			removeOnComplete: true
+		}
 	)
-
-	const template = newUserMailTemplate({
-		name: newUser.fullname,
-		phone: newUser.phone,
-		code,
-		token: verificationToken.token
-	})
-
-	const mailer = await mailerConfig()
-
-	await mailer.sendMail({
-		subject: 'FIMI TECH - Thông tin Publisher',
-		html: template,
-		from: `FIMI <no-reply@fimi.tech>`,
-		to: newUser.email
-	})
 
 	return {
 		message: 'Register successfully',
-		verifyToken: verificationToken.token
+		token: btoa(newUser.email)
 	}
 }

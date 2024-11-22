@@ -4,7 +4,6 @@ import { z } from 'zod'
 import { StatusLibrary } from '@/constraints/status-librery.constraint.js'
 import { authService } from '@/modules/auth/services/index.js'
 import type { IResponse } from '@/types.js'
-import { env } from '@/utils/env.js'
 import { factory } from '@/utils/factory.js'
 
 export const forgotPassword = factory.createHandlers(
@@ -25,10 +24,7 @@ export const forgotPassword = factory.createHandlers(
 			statusCode: 200,
 			code: StatusLibrary.OK,
 			success: true,
-			message: res.message,
-			data: env.isDev && {
-				token: res.resetPasswordToken
-			}
+			message: res.message
 		})
 	}
 )

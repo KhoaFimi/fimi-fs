@@ -3,10 +3,12 @@ import { deleteCookie } from 'hono/cookie'
 
 import { usersService } from '@/modules/users/services/index.js'
 
-export const signOut = async (code: string, c: Context) => {
+export const signOut = async (id: string, c: Context) => {
 	const existingUser = await usersService.findByUnique({
-		where: { code }
+		where: { id }
 	})
+
+	await deleteCookie(c, 'refresh-token')
 
 	await usersService.update({
 		where: {
@@ -18,12 +20,6 @@ export const signOut = async (code: string, c: Context) => {
 				increment: 1
 			}
 		}
-	})
-
-	deleteCookie(c, 'refresh-token', {
-		httpOnly: true,
-		sameSite: 'Lax',
-		secure: true
 	})
 
 	return {

@@ -1,5 +1,5 @@
-import { randomUUID as uuidV4 } from 'crypto'
 import { HTTPException } from 'hono/http-exception'
+import otpGenerator from 'otp-generator'
 
 import { ErrorLibrary } from '@/constraints/error-library.constraint.js'
 import { db } from '@/lib/db.js'
@@ -15,7 +15,12 @@ export const forgotPasswordToken = {
 			await db.forgotPasswordToken.delete({ where: { id: exisitingToken.id } })
 		}
 
-		const token = uuidV4()
+		const token = otpGenerator.generate(6, {
+			digits: true,
+			lowerCaseAlphabets: false,
+			upperCaseAlphabets: false,
+			specialChars: false
+		})
 
 		const expires = new Date(new Date().getTime() + 3600 * 1000)
 

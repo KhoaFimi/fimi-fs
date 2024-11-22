@@ -11,8 +11,8 @@ import { parseZodError } from '@/utils/parse-zod-error.js'
 
 export const signOut = factory.createHandlers(
 	zValidator(
-		'json',
-		z.object({ code: z.string().min(1, { message: 'Code is required' }) }),
+		'query',
+		z.object({ id: z.string().min(1, { message: 'Id is required' }) }),
 		res => {
 			if (!res.success)
 				throw new HTTPException(400, {
@@ -22,9 +22,9 @@ export const signOut = factory.createHandlers(
 		}
 	),
 	async c => {
-		const validatedData = c.req.valid('json')
+		const { id } = c.req.valid('query')
 
-		const res = await authService.signOut(validatedData.code, c)
+		const res = await authService.signOut(id, c)
 
 		return c.json<IResponse>({
 			statusCode: 200,

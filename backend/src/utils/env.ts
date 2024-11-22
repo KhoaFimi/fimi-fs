@@ -19,5 +19,8 @@ export const env = cleanEnv(process.env, {
 	GOOGLE_REFRESH_TOKEN: str(),
 	ADMIN_EMAIL_ADDRESS: email(),
 	ACCESS_TOKEN_EXPIRES: num(),
-	REFRESH_TOKEN_EXPIRES: num()
+	REFRESH_TOKEN_EXPIRES: num(),
+	REDIS_PORT: port({ devDefault: testOnly(6379) }),
+	REDIS_HOST: host({ devDefault: testOnly('127.0.0.1') }),
+	FRONTEND_URL: host({ devDefault: 'http://localhost:3000' })
 })

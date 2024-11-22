@@ -1,19 +1,20 @@
-import { tokenService } from '@/modules/token/services/index.js'
-import { env } from '@/utils/env.js'
-import { sendMail } from '@/utils/send-mail.js'
+import { sendForgotPasswordMailQueue } from '@/lib/queue.js'
+import { usersService } from '@/modules/users/services/index.js'
 
 export const forgotPassword = async (email: string) => {
-	const forgotPasswordToken =
-		await tokenService.forgotPasswordToken.generate(email)
-
-	await sendMail({
-		to: email,
-		subject: 'FIMI TECH - Yêu cầu lấy lại mật khẩu',
-		html: `<a href="${env.HOST || 'http://localhost:3000'}/auth/reset-password?token${forgotPasswordToken.token}">Reset password</a>`
+	await usersService.findByUnique({
+		where: { email }
 	})
 
+	await sendForgotPasswordMailQueue.add(
+		'send-forgot-password-mail',
+		{
+			email
+		},
+		{ removeOnComplete: true }
+	)
+
 	return {
-		message: `Go to "${email}" to reset password`,
-		resetPasswordToken: forgotPasswordToken.token
+		message: `Go to "${email}" to reset password`
 	}
 }

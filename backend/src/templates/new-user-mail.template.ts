@@ -1,5 +1,4 @@
 export const newUserMailTemplate = ({
-	code,
 	name,
 	phone,
 	token
@@ -64,7 +63,7 @@ export const newUserMailTemplate = ({
                         font-weight: bold;
                         font-size: larger;
                     ">
-          Mã giới thiệu của bạn là:
+          OTP xác thực:
         </p>
         <div style="
                         background-color: #8e191c;
@@ -83,7 +82,7 @@ export const newUserMailTemplate = ({
                                 font-weight: 900;
                                 line-height: 0;
                             ">
-            ${code}
+            ${token}
           </p>
         </div>
       </div>
@@ -104,22 +103,6 @@ export const newUserMailTemplate = ({
             ${phone}
           </span>
         </p>
-      </div>
-      <div style="
-                    margin: 30px auto 0 auto;
-                    width: fit-content;
-                    background: #8e191c;
-                    padding: 10px 16px;
-                    border-radius: 10px;
-                    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-                ">
-        <a href="${process.env.BASE_URL || 'http://localhost:3000'}/auth/new-verification?token=${token}" target="_blank" style="
-                        color: #ffffff;
-                        text-decoration: none;
-                        font-weight: bold;
-                    ">
-          Xác thực tài khoản ngay
-        </a>
       </div>
       <div style="
                     margin-top: 1rem;

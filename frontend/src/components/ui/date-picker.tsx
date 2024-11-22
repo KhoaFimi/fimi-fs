@@ -314,10 +314,10 @@ function Calendar({
 									props.onMonthChange?.(newDate)
 								}}
 							>
-								<SelectTrigger className='w-fit gap-1 border-none p-0 focus:bg-accent focus:text-accent-foreground'>
+								<SelectTrigger className='w-fit gap-1 border-none px-2 py-0 focus:bg-accent focus:text-accent-foreground'>
 									<SelectValue />
 								</SelectTrigger>
-								<SelectContent>
+								<SelectContent className='h-[200px]'>
 									{MONTHS.map(month => (
 										<SelectItem
 											key={month.value}
@@ -336,10 +336,10 @@ function Calendar({
 									props.onMonthChange?.(newDate)
 								}}
 							>
-								<SelectTrigger className='w-fit gap-1 border-none p-0 focus:bg-accent focus:text-accent-foreground'>
+								<SelectTrigger className='w-fit gap-1 border-none px-2 py-0 focus:bg-accent focus:text-accent-foreground'>
 									<SelectValue />
 								</SelectTrigger>
-								<SelectContent>
+								<SelectContent className='h-[200px]'>
 									{YEARS.map(year => (
 										<SelectItem
 											key={year.value}

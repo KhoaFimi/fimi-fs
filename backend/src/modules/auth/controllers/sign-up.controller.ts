@@ -6,17 +6,19 @@ import { StatusLibrary } from '@/constraints/status-librery.constraint.js'
 import { signUpSchema } from '@/modules/auth/schemas/sign-up.schema.js'
 import { authService } from '@/modules/auth/services/index.js'
 import type { IResponse } from '@/types.js'
-import { env } from '@/utils/env.js'
 import { factory } from '@/utils/factory.js'
 import { parseZodError } from '@/utils/parse-zod-error.js'
 
 export const signUp = factory.createHandlers(
 	zValidator('json', signUpSchema, res => {
-		if (!res.success)
+		if (!res.success) {
+			console.log(res.error)
+
 			throw new HTTPException(400, {
 				message: parseZodError(res.error.message),
 				cause: ErrorLibrary.BAD_REQUEST
 			})
+		}
 	}),
 	async c => {
 		const validatedData = c.req.valid('json')
@@ -28,8 +30,8 @@ export const signUp = factory.createHandlers(
 			success: true,
 			code: StatusLibrary.CREATED_UESER,
 			message: res.message,
-			data: env.isDev && {
-				token: res.verifyToken
+			data: {
+				token: res.token
 			}
 		})
 	}
