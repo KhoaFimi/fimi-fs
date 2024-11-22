@@ -26,6 +26,7 @@ app.use(
 		origin: [
 			'http://localhost:5173',
 			'http://localhost:4173',
+			'https://fimi-fs.vercel.app',
 			'http://192.168.22.11:5173',
 			'https://tuna-awaited-rat.ngrok-free.app'
 		],
