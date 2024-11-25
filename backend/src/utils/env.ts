@@ -22,5 +22,5 @@ export const env = cleanEnv(process.env, {
 	REFRESH_TOKEN_EXPIRES: num(),
 	REDIS_PORT: port({ devDefault: testOnly(6379) }),
 	REDIS_HOST: host({ devDefault: testOnly('127.0.0.1') }),
-	FRONTEND_URL: host({ devDefault: 'http://localhost:5173' })
+	FRONTEND_URL: str({ devDefault: testOnly('https://fimi-fs.vercel.app/') })
 })

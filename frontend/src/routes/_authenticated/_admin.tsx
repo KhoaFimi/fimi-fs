@@ -83,7 +83,7 @@ const AdminSidebarTrigger = () => {
 	const { open } = useSidebar()
 
 	return (
-		<SidebarTrigger className='size-8 rounded-l-none rounded-t-none bg-primary p-1 text-base text-white transition hover:bg-primary/80 hover:text-white'>
+		<SidebarTrigger className='size-8 rounded-l-none rounded-t-none border bg-background p-1 text-base text-white shadow-sm transition hover:text-white'>
 			{open ? (
 				<ChevronLeft className='size-7' />
 			) : (

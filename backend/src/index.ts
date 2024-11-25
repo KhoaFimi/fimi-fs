@@ -23,7 +23,11 @@ app.use(logger(httpLogger))
 app.use(
 	'*',
 	cors({
-		origin: ['https://fimi-fs.vercel.app', 'http://localhost:5173'],
+		origin: [
+			'https://fimi-fs.vercel.app',
+			'http://localhost:5173',
+			'https://fimi-fs.vercel.app/'
+		],
 		//origin: 'http://localhost:*',
 		credentials: true
 	})
