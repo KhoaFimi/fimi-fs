@@ -12,6 +12,7 @@ export const Route = createFileRoute('/_authenticated/dashboard')({
 
 function RouteComponent() {
 	const userId = JWTManager.getUserId()
+	const userRole = JWTManager.getUserRole()
 	const qrRef = useRef<HTMLCanvasElement>(null)
 
 	const inviteLink = `${import.meta.env.DOMAIN ?? 'http://localhost:5173'}/auth/invite?data=${btoa(userId as string)}`
@@ -39,6 +40,7 @@ function RouteComponent() {
 			<Link to='/auth/login'>Login</Link>
 
 			<p>userId: {userId}</p>
+			<p>userRole: {userRole}</p>
 			<LogoutButton />
 			<QRCodeCanvas
 				id='qr-code'

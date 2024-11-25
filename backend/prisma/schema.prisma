@@ -140,10 +140,9 @@ model VerificationToken {
 }
 
 model ForgotPasswordToken {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
   identifier String
-  token      String   @unique
-  expires    DateTime
+  token      String @unique
 }
 
 //#endregion

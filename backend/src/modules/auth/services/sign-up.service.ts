@@ -64,6 +64,8 @@ export const signUp = async (values: SignUpSchema) => {
 		}
 	})
 
+	console.log(newUser)
+
 	await sendVerificationMailQueue.add(
 		'send-verification-mail',
 		{

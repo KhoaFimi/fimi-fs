@@ -22,7 +22,6 @@ import {
 	ForgotPasswordSchema,
 	forgotPasswordSchema
 } from '@/features/auth/schemas/forgot-password.schema'
-import { Route } from '@/routes/auth/forgot-password'
 
 const ForgotPasswordForm = () => {
 	const form = useForm<ForgotPasswordSchema>({
@@ -32,15 +31,13 @@ const ForgotPasswordForm = () => {
 		}
 	})
 
-	const navigate = Route.useNavigate()
-
 	const [error, setError] = useState<undefined | string>(undefined)
 	const [success, setSuccess] = useState<undefined | string>(undefined)
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: async (values: ForgotPasswordSchema) =>
 			await forgotPassword(values),
-		onSuccess: (data, variables) => {
+		onSuccess: data => {
 			if (data.error) {
 				setError(data.error)
 				return
@@ -48,12 +45,6 @@ const ForgotPasswordForm = () => {
 
 			if (data.success) {
 				setSuccess(data.success)
-				navigate({
-					to: '/auth/reset-password',
-					search: {
-						data: btoa(variables.email)
-					}
-				})
 			}
 		}
 	})

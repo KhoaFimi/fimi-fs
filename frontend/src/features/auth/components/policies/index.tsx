@@ -1,6 +1,6 @@
 'use client'
 
-import DialogWrapper from '@/features/auth/components/policies/dialog-wrapper'
+import DialogWrapper from '@/components/dialog-wrapper'
 import SecurityPolicy from '@/features/auth/components/policies/security-policy'
 import TermPolicy from '@/features/auth/components/policies/term-policy'
 import UserPolicy from '@/features/auth/components/policies/user-policy'
@@ -26,7 +26,7 @@ const Policies = () => {
 				<SecurityPolicy />
 			</DialogWrapper>
 			<DialogWrapper
-				title='NỘI DUNG CHÍNH SÁCH VỀ BẢO VỆ DỮ LIỆU CÁ NHÂN CHÍNH SÁCH BẢO VỆ DỮ LIỆU CÁ NHÂN ĐỐI VỚI KHÁCH HÀNG'
+				title='NỘI DUNG CHÍNH SÁCH BẢO VỆ DỮ LIỆU CÁ NHÂN ĐỐI VỚI KHÁCH HÀNG'
 				open={openUserPolicy}
 				onOpenChange={onCloseUserPolicy}
 			>

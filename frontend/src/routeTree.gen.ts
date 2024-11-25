@@ -15,12 +15,15 @@ import { Route as AuthImport } from './routes/auth'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedDashboardImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAdminImport } from './routes/_authenticated/_admin'
 import { Route as AuthResetPasswordIndexImport } from './routes/auth/reset-password/index'
 import { Route as AuthRegisterIndexImport } from './routes/auth/register/index'
 import { Route as AuthLoginIndexImport } from './routes/auth/login/index'
 import { Route as AuthInviteIndexImport } from './routes/auth/invite/index'
 import { Route as AuthForgotPasswordIndexImport } from './routes/auth/forgot-password/index'
 import { Route as AuthEmailVerificationIndexImport } from './routes/auth/email-verification/index'
+import { Route as AuthenticatedAdminAdminIndexImport } from './routes/_authenticated/_admin/admin/index'
+import { Route as AuthenticatedAdminAdminPublishersIndexImport } from './routes/_authenticated/_admin/admin/publishers/index'
 
 // Create/Update Routes
 
@@ -44,6 +47,11 @@ const IndexRoute = IndexImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedAdminRoute = AuthenticatedAdminImport.update({
+  id: '/_admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -85,6 +93,20 @@ const AuthEmailVerificationIndexRoute = AuthEmailVerificationIndexImport.update(
   } as any,
 )
 
+const AuthenticatedAdminAdminIndexRoute =
+  AuthenticatedAdminAdminIndexImport.update({
+    id: '/admin/',
+    path: '/admin/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+
+const AuthenticatedAdminAdminPublishersIndexRoute =
+  AuthenticatedAdminAdminPublishersIndexImport.update({
+    id: '/admin/publishers/',
+    path: '/admin/publishers/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -109,6 +131,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
+    }
+    '/_authenticated/_admin': {
+      id: '/_authenticated/_admin'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedAdminImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
@@ -159,16 +188,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordIndexImport
       parentRoute: typeof AuthImport
     }
+    '/_authenticated/_admin/admin/': {
+      id: '/_authenticated/_admin/admin/'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminAdminIndexImport
+      parentRoute: typeof AuthenticatedAdminImport
+    }
+    '/_authenticated/_admin/admin/publishers/': {
+      id: '/_authenticated/_admin/admin/publishers/'
+      path: '/admin/publishers'
+      fullPath: '/admin/publishers'
+      preLoaderRoute: typeof AuthenticatedAdminAdminPublishersIndexImport
+      parentRoute: typeof AuthenticatedAdminImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAdminIndexRoute: typeof AuthenticatedAdminAdminIndexRoute
+  AuthenticatedAdminAdminPublishersIndexRoute: typeof AuthenticatedAdminAdminPublishersIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAdminIndexRoute: AuthenticatedAdminAdminIndexRoute,
+  AuthenticatedAdminAdminPublishersIndexRoute:
+    AuthenticatedAdminAdminPublishersIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
 }
 
@@ -198,7 +257,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof AuthenticatedRouteWithChildren
+  '': typeof AuthenticatedAdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
@@ -207,11 +266,13 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginIndexRoute
   '/auth/register': typeof AuthRegisterIndexRoute
   '/auth/reset-password': typeof AuthResetPasswordIndexRoute
+  '/admin': typeof AuthenticatedAdminAdminIndexRoute
+  '/admin/publishers': typeof AuthenticatedAdminAdminPublishersIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof AuthenticatedRouteWithChildren
+  '': typeof AuthenticatedAdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
@@ -220,6 +281,8 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginIndexRoute
   '/auth/register': typeof AuthRegisterIndexRoute
   '/auth/reset-password': typeof AuthResetPasswordIndexRoute
+  '/admin': typeof AuthenticatedAdminAdminIndexRoute
+  '/admin/publishers': typeof AuthenticatedAdminAdminPublishersIndexRoute
 }
 
 export interface FileRoutesById {
@@ -227,6 +290,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/_authenticated/_admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/auth/email-verification/': typeof AuthEmailVerificationIndexRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
@@ -234,6 +298,8 @@ export interface FileRoutesById {
   '/auth/login/': typeof AuthLoginIndexRoute
   '/auth/register/': typeof AuthRegisterIndexRoute
   '/auth/reset-password/': typeof AuthResetPasswordIndexRoute
+  '/_authenticated/_admin/admin/': typeof AuthenticatedAdminAdminIndexRoute
+  '/_authenticated/_admin/admin/publishers/': typeof AuthenticatedAdminAdminPublishersIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -249,6 +315,8 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/admin'
+    | '/admin/publishers'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -261,11 +329,14 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/admin'
+    | '/admin/publishers'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/_admin'
     | '/_authenticated/dashboard'
     | '/auth/email-verification/'
     | '/auth/forgot-password/'
@@ -273,6 +344,8 @@ export interface FileRouteTypes {
     | '/auth/login/'
     | '/auth/register/'
     | '/auth/reset-password/'
+    | '/_authenticated/_admin/admin/'
+    | '/_authenticated/_admin/admin/publishers/'
   fileRoutesById: FileRoutesById
 }
 
@@ -309,6 +382,7 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
+        "/_authenticated/_admin",
         "/_authenticated/dashboard"
       ]
     },
@@ -321,6 +395,14 @@ export const routeTree = rootRoute
         "/auth/login/",
         "/auth/register/",
         "/auth/reset-password/"
+      ]
+    },
+    "/_authenticated/_admin": {
+      "filePath": "_authenticated/_admin.tsx",
+      "parent": "/_authenticated",
+      "children": [
+        "/_authenticated/_admin/admin/",
+        "/_authenticated/_admin/admin/publishers/"
       ]
     },
     "/_authenticated/dashboard": {
@@ -350,6 +432,14 @@ export const routeTree = rootRoute
     "/auth/reset-password/": {
       "filePath": "auth/reset-password/index.tsx",
       "parent": "/auth"
+    },
+    "/_authenticated/_admin/admin/": {
+      "filePath": "_authenticated/_admin/admin/index.tsx",
+      "parent": "/_authenticated/_admin"
+    },
+    "/_authenticated/_admin/admin/publishers/": {
+      "filePath": "_authenticated/_admin/admin/publishers/index.ts",
+      "parent": "/_authenticated/_admin"
     }
   }
 }

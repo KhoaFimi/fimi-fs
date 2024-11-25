@@ -20,14 +20,14 @@ export const useAuth = create<IAuth>()(set => ({
 		const token = JWTManager.getToken()
 
 		if (!token) {
-			const success = await JWTManager.getRefreshToken()
+			const res = await JWTManager.getRefreshToken()
 
-			if (success) {
-				set(state => ({ ...state, isAuth: true }))
+			if (res.success) {
+				set(state => ({ ...state, isAuth: true, user: res.user }))
 				return true
 			}
 
-			set(state => ({ ...state, isAuth: false }))
+			set(state => ({ ...state, isAuth: false, user: {} }))
 			return false
 		}
 

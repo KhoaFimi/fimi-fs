@@ -1,4 +1,4 @@
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode, JwtPayload } from 'jwt-decode'
 
 import { ErrorLibrary } from '@/contraints/error-library.constraint'
 import { httpClient } from '@/lib/http'
@@ -9,17 +9,21 @@ const JWTManager = () => {
 	let inMemoryToken: string | null = null
 	let refreshTokenTimeoutId: number | null = null
 	let userId: string | undefined = undefined
+	let userRole: string | undefined = undefined
 
 	const getToken = () => inMemoryToken
 
 	const getUserId = () => userId
 
+	const getUserRole = () => userRole
+
 	const setToken = (accessToken: string) => {
 		inMemoryToken = accessToken
 
-		const decoded = jwtDecode(accessToken)
+		const decoded = jwtDecode<JwtPayload & { role: string }>(accessToken)
 
 		userId = decoded.sub
+		userRole = decoded.role
 		setRefreshTokenTimeout((decoded.exp as number) - (decoded.iat as number))
 
 		return true
@@ -48,11 +52,16 @@ const JWTManager = () => {
 			resData.code === ErrorLibrary.NOT_FOUND
 		) {
 			deleteToken()
-			return false
+			return {
+				success: false
+			}
 		}
 
 		setToken(resData.data.accessToken)
-		return true
+		return {
+			success: true,
+			user: resData.data.user
+		}
 	}
 
 	const setRefreshTokenTimeout = (delay: number) => {
@@ -62,7 +71,14 @@ const JWTManager = () => {
 		)
 	}
 
-	return { getToken, setToken, getRefreshToken, deleteToken, getUserId }
+	return {
+		getToken,
+		setToken,
+		getRefreshToken,
+		deleteToken,
+		getUserId,
+		getUserRole
+	}
 }
 
 export default JWTManager()

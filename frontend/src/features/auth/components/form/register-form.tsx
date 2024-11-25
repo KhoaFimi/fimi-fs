@@ -25,6 +25,7 @@ import {
 	RegisterSchema,
 	registerSchema
 } from '@/features/auth/schemas/register.schema'
+import { useRegisterSuccess } from '@/hooks/use-register-success'
 import { useSercurityPolicyStore } from '@/hooks/use-sercurity-policy-store'
 import { useTermPolicyStore } from '@/hooks/use-term-policy-store'
 import { useUserPolicyStore } from '@/hooks/use-user-policy-store'
@@ -39,6 +40,7 @@ const RegisterForm = () => {
 
 	const [error, setError] = useState<string | undefined>(undefined)
 	const [success, setSuccess] = useState<string | undefined>(undefined)
+	const { setEmail, onOpen } = useRegisterSuccess()
 
 	const form = useForm<RegisterSchema>({
 		resolver: zodResolver(registerSchema),
@@ -61,13 +63,15 @@ const RegisterForm = () => {
 
 			return await register(values)
 		},
-		onSuccess: data => {
+		onSuccess: (data, variables) => {
 			if (data.error) {
 				setError(data.error)
 			}
 
 			if (data.success) {
 				setSuccess(data.success)
+				setEmail(variables.email)
+				onOpen()
 			}
 		}
 	})

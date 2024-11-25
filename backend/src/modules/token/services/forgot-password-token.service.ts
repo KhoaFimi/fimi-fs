@@ -1,5 +1,5 @@
+import { randomUUID as uuidV4 } from 'crypto'
 import { HTTPException } from 'hono/http-exception'
-import otpGenerator from 'otp-generator'
 
 import { ErrorLibrary } from '@/constraints/error-library.constraint.js'
 import { db } from '@/lib/db.js'
@@ -15,19 +15,11 @@ export const forgotPasswordToken = {
 			await db.forgotPasswordToken.delete({ where: { id: exisitingToken.id } })
 		}
 
-		const token = otpGenerator.generate(6, {
-			digits: true,
-			lowerCaseAlphabets: false,
-			upperCaseAlphabets: false,
-			specialChars: false
-		})
-
-		const expires = new Date(new Date().getTime() + 3600 * 1000)
+		const token = uuidV4()
 
 		const newToken = await db.forgotPasswordToken.create({
 			data: {
 				token,
-				expires,
 				identifier
 			}
 		})
@@ -45,14 +37,6 @@ export const forgotPasswordToken = {
 			throw new HTTPException(400, {
 				message: 'Missing token',
 				cause: ErrorLibrary.BAD_REQUEST
-			})
-
-		const hasExpires = new Date(existingToken.expires) < new Date()
-
-		if (hasExpires)
-			throw new HTTPException(401, {
-				message: 'Token is expires',
-				cause: ErrorLibrary.UNAUTHORIZED
 			})
 
 		const existingUser = await usersService.findByUnique({

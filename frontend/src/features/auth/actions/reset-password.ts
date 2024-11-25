@@ -6,7 +6,10 @@ import {
 } from '@/features/auth/schemas/reset-password.schema'
 import { httpClient } from '@/lib/http'
 
-export const resetPassword = async (values: ResetPasswordSchema) => {
+export const resetPassword = async (
+	token: string,
+	values: ResetPasswordSchema
+) => {
 	const validatedValues = resetPasswordSchema.safeParse(values)
 
 	if (!validatedValues.success)
@@ -16,7 +19,12 @@ export const resetPassword = async (values: ResetPasswordSchema) => {
 
 	const { data: resData } = await httpClient.post(
 		'/auth/reset-password',
-		validatedValues.data
+		validatedValues.data,
+		{
+			params: {
+				token
+			}
+		}
 	)
 
 	if (
@@ -25,12 +33,6 @@ export const resetPassword = async (values: ResetPasswordSchema) => {
 	)
 		return {
 			error: 'OTP không chính xác'
-		}
-
-	if (resData.code === ErrorLibrary.UNAUTHORIZED)
-		return {
-			warning: 'OTP đã hết hạn',
-			redirect: true
 		}
 
 	if (resData.code === StatusLibrary.OK)

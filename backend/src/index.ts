@@ -24,6 +24,7 @@ app.use(
 	'*',
 	cors({
 		origin: ['https://fimi-fs.vercel.app', 'http://localhost:5173'],
+		//origin: 'http://localhost:*',
 		credentials: true
 	})
 	//   {

@@ -16,7 +16,6 @@ import { env } from '@/utils/env.js'
 
 export interface IAccessTokenPayload extends JWTPayload {
 	sub: string
-
 	role: string
 	version: number
 }
@@ -32,7 +31,6 @@ export const jwt = {
 		const accessToken = await sign(
 			{
 				sub: payload.sub,
-				code: payload.code,
 				role: payload.role,
 				iat: now,
 				version: payload.version,

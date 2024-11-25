@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
 export const resetPasswordSchema = z.object({
-	token: z.string().min(1, { message: 'Vui lòng nhập OTP xác thực' }),
 	password: z
 		.string()
 		.min(7, { message: 'Mật khẩu phải có tối thiểu 7 ký tự' })

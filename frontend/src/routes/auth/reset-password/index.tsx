@@ -6,7 +6,7 @@ import AuthPageWrapper from '@/features/auth/components/auth-page-wrapper'
 import ResetPasswordForm from '@/features/auth/components/form/reset-password-form'
 
 const searchParams = z.object({
-	data: z.string()
+	token: z.string()
 })
 
 const ResetPasswordPage = () => {

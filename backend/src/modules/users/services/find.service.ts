@@ -68,7 +68,43 @@ export const findUsersService = {
 		orderBy,
 		errorMessage = defaultMessage.many
 	}: {
-		where: Prisma.UserWhereInput
+		where?: Prisma.UserWhereInput
+		page: number
+		limit: number
+		orderBy?: Prisma.UserOrderByWithRelationInput
+		errorMessage?: string
+	}): Promise<{ users: User[]; total: number }> => {
+		const skip = (page - 1) * limit
+
+		const [existingUsers, totalUsers] = await db.$transaction([
+			db.user.findMany({
+				where,
+				skip,
+				take: limit,
+				orderBy
+			}),
+			db.user.count()
+		])
+
+		console.log(existingUsers)
+
+		if (existingUsers.length < 1)
+			throw new HTTPException(404, {
+				message: errorMessage,
+				cause: ErrorLibrary.NOT_FOUND
+			})
+
+		return {
+			users: existingUsers,
+			total: totalUsers
+		}
+	},
+	findMany: async ({
+		page = 1,
+		limit = 10,
+		orderBy,
+		errorMessage = defaultMessage.many
+	}: {
 		page: number
 		limit: number
 		orderBy: Prisma.UserOrderByWithRelationInput
@@ -77,7 +113,6 @@ export const findUsersService = {
 		const skip = (page - 1) * limit + 1
 
 		const existingUsers = await db.user.findMany({
-			where,
 			skip,
 			take: limit,
 			orderBy
